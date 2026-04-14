@@ -12,7 +12,7 @@ const NavbarComp = () => {
 
                     {/* 1. Brand Logo - Solid Bottle Green with Teal Detail */}
                     <Link to="/" className="flex items-center gap-3 no-underline group">
-                        <div className="w-10 h-10 bg-[#006a4e] rounded-sm flex items-center justify-center text-white font-black text-xl group-hover:bg-[#008080] transition-all duration-300 shadow-lg shadow-[#006a4e]/10">
+                        <div className="w-10 h-10 bg-[#011812] rounded-sm flex items-center justify-center text-white font-black text-xl group-hover:bg-[#008080] transition-all duration-300 shadow-lg shadow-[#006a4e]/10">
                             A
                         </div>
                         <span className="text-2xl font-bold tracking-tighter text-white uppercase">
