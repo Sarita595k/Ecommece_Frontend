@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaSearch, FaBars, FaTimes } from 'react-icons/fa';
-// navbar component 
+// navbar component starts here
 const NavbarComp = () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -95,3 +95,5 @@ const NavbarComp = () => {
 };
 
 export default NavbarComp;
+
+// navbar component ends here
