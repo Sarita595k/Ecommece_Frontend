@@ -2,23 +2,24 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import { productDetailsReducer, productReducer } from '../Reducers/productReducers'; // Adjust path as needed
+import { authReducer } from "../Reducers/UserReducers";
 
-// 1. Combine all reducers into one root reducer
+// 1. Combine all reducers into one root reducer (Only do this once!)
 const reducer = combineReducers({
     products: productReducer,
-    productDetails: productDetailsReducer
-    // You can add more reducers here (e.g., cart: cartReducer)
+    productDetails: productDetailsReducer,
+    auth: authReducer // This provides the isAuthenticated state globally
 });
 
-// 2. Initial state for the entire store
+// 2. Initial state
 let initialState = {};
 
-// 3. Middleware (Thunk allows us to return functions in actions)
+// 3. Middleware
 const middleware = [thunk];
 
 // 4. Create the store
 const store = createStore(
-    reducer,
+    reducer, // The combined reducer goes here
     initialState,
     composeWithDevTools(applyMiddleware(...middleware))
 );

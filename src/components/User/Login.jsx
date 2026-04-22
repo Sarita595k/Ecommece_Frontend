@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { FaUserShield } from 'react-icons/fa'; // Icon for Admin
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isAdminLogin, setIsAdminLogin] = useState(false); // New State
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -14,7 +16,7 @@ const Login = () => {
 
         try {
             const response = await fetch(`${import.meta.env.VITE_URL}/api/user/login`, {
-                method: 'POST', // Changed to POST to match standard login practices
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
@@ -22,8 +24,18 @@ const Login = () => {
             const data = await response.json();
 
             if (data.success) {
-                // You can store token in localStorage or use Context/Redux
-                navigate('/');
+                // Check if user is actually an admin if they toggled the Admin Login
+                if (isAdminLogin && data.user.role !== 'admin') {
+                    alert("Access Denied: You are not an admin.");
+                    return;
+                }
+
+                // Redirect based on role or toggle
+                if (data.user.role === 'admin' || isAdminLogin) {
+                    navigate('/admin/dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 alert(data.message || "Login Failed");
             }
@@ -37,11 +49,28 @@ const Login = () => {
     return (
         <div className="min-h-screen bg-[#050505] flex items-center justify-center px-4 py-12">
             <div className="max-w-md w-full bg-[#0a0a0a] border border-[#004d39] p-8 rounded-sm shadow-2xl">
+
+                {/* Admin Toggle Tab */}
+                <div className="flex justify-center mb-6">
+                    <button
+                        onClick={() => setIsAdminLogin(false)}
+                        className={`px-4 py-1 text-[10px] tracking-[0.2em] uppercase transition-all ${!isAdminLogin ? 'border-b-2 border-[#008080] text-white' : 'text-gray-600'}`}
+                    >
+                        User
+                    </button>
+                    <button
+                        onClick={() => setIsAdminLogin(true)}
+                        className={`px-4 py-1 text-[10px] tracking-[0.2em] uppercase transition-all ${isAdminLogin ? 'border-b-2 border-[#008080] text-white' : 'text-gray-600'}`}
+                    >
+                        Admin
+                    </button>
+                </div>
+
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold text-white tracking-tighter uppercase">
-                        Welcome <span className="text-[#008080]">Back.</span>
+                        {isAdminLogin ? "Admin " : "Welcome "}
+                        <span className="text-[#008080]">{isAdminLogin ? "Portal" : "Back."}</span>
                     </h2>
-                    <p className="text-gray-500 text-sm mt-2">Login to your Avsar account</p>
                 </div>
 
                 <form onSubmit={handleLogin} className="space-y-6">
@@ -78,9 +107,9 @@ const Login = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-[#006a4e] text-white py-4 font-black text-xs uppercase tracking-[0.3em] hover:bg-[#008080] transition-all disabled:opacity-50 shadow-lg shadow-[#006a4e]/20"
+                        className={`w-full ${isAdminLogin ? 'bg-[#7a1a1a] hover:bg-[#a12525]' : 'bg-[#006a4e] hover:bg-[#008080]'} text-white py-4 font-black text-xs uppercase tracking-[0.3em] transition-all disabled:opacity-50 shadow-lg`}
                     >
-                        {loading ? "Verifying..." : "Sign In"}
+                        {loading ? "Verifying..." : isAdminLogin ? "Secure Login" : "Sign In"}
                     </button>
                 </form>
 

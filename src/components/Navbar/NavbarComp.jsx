@@ -62,6 +62,7 @@ const NavbarComp = () => {
                             >
                                 Join Now
                             </Link>
+
                         </div>
                     </div>
 
