@@ -7,7 +7,7 @@ const AdminUsers = () => {
     const fetchUsers = async () => {
         try {
             // Your admin route: routes.get("/admin/users", isAuthenticated, authorizedRole('admin'), getAllUsers)
-            const { data } = await axios.get('/api/v1/admin/users');
+            const { data } = await axios.get('/api/user/admin/users');
             setUsers(data.users);
         } catch (error) {
             console.error("Error fetching users", error.response.data.message);

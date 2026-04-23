@@ -2,16 +2,36 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { FaUserShield } from 'react-icons/fa'; // Icon for Admin
+import { useDispatch, useSelector } from "react-redux";
+import { login, clearErrors } from "../../Actions/UsersActions"; // Adjust path
 
 const Login = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isAdminLogin, setIsAdminLogin] = useState(false); // New State
-    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // Pulling state from Redux
+    const { isAuthenticated, error, loading, user } = useSelector(state => state.auth);
+
+    useEffect(() => {
+        // As soon as Redux says we are authenticated, move to the dashboard
+        if (isAuthenticated) {
+            if (user.role === 'admin') {
+                navigate("/admin/dashboard");
+            } else {
+                navigate("/");
+            }
+        }
+
+        if (error) {
+            alert(error);
+            dispatch(clearErrors());
+        }
+    }, [dispatch, isAuthenticated, error, navigate, user]);
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        dispatch(login(email, password));
         setLoading(true);
 
         try {
