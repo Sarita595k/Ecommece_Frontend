@@ -18,3 +18,4 @@ const ProtectedRoute = ({ isAdmin, children, isAuthenticated, user, loading }) =
 };
 
 export default ProtectedRoute;
+// end of ProtectedRoute 
