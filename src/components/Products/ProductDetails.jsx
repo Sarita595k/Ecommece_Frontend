@@ -119,4 +119,3 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
-// end of product details 
