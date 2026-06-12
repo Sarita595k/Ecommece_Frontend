@@ -6,7 +6,9 @@ import {
     LOGIN_REQUEST,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
-    CLEAR_ERRORS
+    CLEAR_ERRORS,
+    LOGOUT_SUCCESS,
+    LOGOUT_FAIL
 } from '../Constants/UserConstant';
 
 // Load User Action (Checks if user is logged in)
@@ -47,6 +49,26 @@ export const login = (email, password) => async (dispatch) => {
         dispatch({
             type: LOGIN_FAIL,
             payload: error.response.data.errMessage
+        });
+    }
+};
+
+export const clearErrors = () => async (dispatch) => {
+    dispatch({
+        type: CLEAR_ERRORS
+    });
+};
+
+// Logout User Action
+export const logout = () => async (dispatch) => {
+    try {
+        await axios.get('/api/user/logout', { withCredentials: true });
+
+        dispatch({ type: LOGOUT_SUCCESS });
+    } catch (error) {
+        dispatch({
+            type: LOGOUT_FAIL,
+            payload: error.response.data.errMessage || "Failed to logout"
         });
     }
 };
