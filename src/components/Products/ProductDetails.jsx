@@ -42,12 +42,11 @@ const ProductDetails = () => {
                         {/* Left: Product Image */}
                         <Col lg={6} className="p-0 bg-white flex items-center justify-center min-h-[400px]">
                             <img
-                                src={product.images && product.images.url}
+                                src={product.images && product.images?.url}
                                 alt={product.name}
                                 className="max-w-full max-h-[500px] object-contain p-10 transition-transform duration-500 hover:scale-105"
                             />
                         </Col>
-
                         {/* Right: Product Info */}
                         <Col lg={6} className="p-8 md:p-12 border-l border-[#004d39]">
                             <span className="text-[#008080] text-xs font-bold uppercase tracking-[0.2em]">

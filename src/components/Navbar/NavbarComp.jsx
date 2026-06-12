@@ -118,7 +118,7 @@ const NavbarComp = () => {
                             {isAuthenticated && user ? (
                                 <>
                                     <Link
-                                        to={user.role === 'admin' ? "/admin/dashboard" : "/"}
+                                        to={user.role === 'seller' ? "/seller/dashboard" : "/"}
                                         className="text-center py-4 border border-[#008080] text-white font-bold no-underline tracking-widest uppercase text-sm bg-[#011812]"
                                         onClick={() => setIsOpen(false)}
                                     >

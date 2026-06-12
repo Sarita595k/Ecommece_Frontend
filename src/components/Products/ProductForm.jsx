@@ -27,7 +27,6 @@ const ProductForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Packaging the form to match your schema schema parameters layout structure
         const productData = {
             name,
             price: Number(price),
@@ -37,7 +36,7 @@ const ProductForm = () => {
             seller,
             images: [
                 {
-                    public_id: `prod_${Date.now()}`, // Fallback mock dynamic reference 
+                    public_id: `prod_${Date.now()}`,
                     url: imageUrl || "https://via.placeholder.com/150"
                 }
             ]
@@ -45,7 +44,7 @@ const ProductForm = () => {
 
         dispatch(createProduct(productData));
         alert("Product Created Successfully!");
-        navigate('/admin/dashboard');
+        navigate('/seller/dashboard'); // Fixed: Points to correct dashboard path route
     };
 
     return (
