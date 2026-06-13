@@ -17,7 +17,11 @@ const App = () => {
   const { user, isAuthenticated, loading } = useSelector(state => state.auth);
 
   useEffect(() => {
-    dispatch(loadUser());
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      dispatch(loadUser());
+    }
   }, [dispatch]);
 
   return (

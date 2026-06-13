@@ -23,6 +23,7 @@ const Login = () => {
             if (isSellerLogin && userRole !== 'seller') {
                 alert("Access Denied: You are not a registered seller.");
                 setIsSubmitting(false);
+                navigate("/");
                 return;
             }
 
@@ -43,8 +44,14 @@ const Login = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        setIsSubmitting(true); // FIXED: Turn on submission state when clicked
-        dispatch(login(email, password));
+
+        if (!email.trim() || !password.trim()) {
+            alert("Please enter email and password");
+            return;
+        }
+
+        setIsSubmitting(true);
+        dispatch(login(email.trim(), password));
     };
 
     return (
