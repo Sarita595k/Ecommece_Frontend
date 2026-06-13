@@ -51,18 +51,18 @@ export const productDetails = (id) => async (dispatch) => {
     }
 };
 
-// 2. Added Admin Create Product Action 
+// 2. Added seller Create Product Action 
 export const createProduct = (productData) => async (dispatch) => {
     try {
         dispatch({ type: NEW_PRODUCT_REQUEST });
 
         const config = {
             headers: { 'Content-Type': 'application/json' },
-            withCredentials: true // Essential for sending admin JWT cookies to your backend
+            withCredentials: true // Essential for sending seller JWT cookies to your backend
         };
 
-        // This path must match your backend router route (e.g., /api/admin/product/new)
-        const { data } = await axios.post(`/api/admin/product/new`, productData, config);
+        // This path must match your backend router route (e.g., /api/seller/product/new)
+        const { data } = await axios.post(`/api/seller/product/new`, productData, config);
 
         dispatch({
             type: NEW_PRODUCT_SUCCESS,
