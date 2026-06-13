@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; // Fixed: Added useEffect
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useDispatch, useSelector } from "react-redux";
@@ -8,24 +8,27 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // Fixed: Declared missing local states
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSellerLogin, setIsSellerLogin] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false); // FIXED: Track actual form submission
 
-    // Pulling state from Redux
+    // Pulling state from Redux global layer
     const { isAuthenticated, error, loading, user } = useSelector(state => state.auth);
 
     useEffect(() => {
-        // Handle redirection once authenticated via Redux state
         if (isAuthenticated && user) {
-            if (isSellerLogin && user.role !== 'seller') {
-                alert("Access Denied: You are not an seller.");
+            const userRole = user.role.toLowerCase();
+
+            if (isSellerLogin && userRole !== 'seller') {
+                alert("Access Denied: You are not a registered seller.");
+                setIsSubmitting(false);
                 return;
             }
 
-            if (user.role === 'Seller' || isSellerLogin) {
-                navigate("/Seller/dashboard");
+            if (userRole === 'seller') {
+                setIsSellerLogin(true);
+                navigate("/seller/dashboard");
             } else {
                 navigate("/");
             }
@@ -33,13 +36,14 @@ const Login = () => {
 
         if (error) {
             alert(error);
+            setIsSubmitting(false); // FIXED: Reset button status on error
             dispatch(clearErrors());
         }
     }, [dispatch, isAuthenticated, error, navigate, user, isSellerLogin]);
 
     const handleLogin = (e) => {
         e.preventDefault();
-        // Fixed: Removed the raw fetch. Redux handles loading and the API call now!
+        setIsSubmitting(true); // FIXED: Turn on submission state when clicked
         dispatch(login(email, password));
     };
 
@@ -103,12 +107,13 @@ const Login = () => {
                         </Link>
                     </div>
 
+                    {/* FIXED: Conditional tracking updates */}
                     <button
                         type="submit"
-                        disabled={loading} // Managed globally by Redux now
-                        className={`w-full ${isSellerLogin ? 'bg-[#7a1a1a] hover:bg-[#a12525]' : 'bg-[#006a4e] hover:bg-[#008080]'} text-white py-4 font-black text-xs uppercase tracking-[0.3em] transition-all disabled:opacity-50 shadow-lg`}
+                        disabled={loading || isSubmitting}
+                        className={`w-full ${isSellerLogin ? 'bg-[#004d39] hover:bg-[#006a4e]' : 'bg-[#006a4e] hover:bg-[#008080]'} text-white py-4 font-black text-xs uppercase tracking-[0.3em] transition-all disabled:opacity-50 shadow-lg`}
                     >
-                        {loading ? "Verifying..." : isSellerLogin ? "Secure Login" : "Sign In"}
+                        {isSubmitting && loading ? "Verifying..." : isSellerLogin ? "Secure Merchant Login" : "Sign In"}
                     </button>
                 </form>
 

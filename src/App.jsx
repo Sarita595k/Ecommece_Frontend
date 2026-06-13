@@ -1,4 +1,8 @@
 import { Route, Routes } from "react-router-dom"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { loadUser } from "./Actions/UsersActions"
+
 import LandingPage from "./Pages/LandingPage"
 import ProductDetails from "./components/Products/ProductDetails"
 import Login from "./components/User/Login"
@@ -7,10 +11,14 @@ import NavbarComp from "./components/Navbar/NavbarComp"
 import ProtectedRoute from "./components/ProtectedRoutes/ProtectedRoute"
 import SellerDashboard from "./components/Seller/SellerDashboard"
 import ProductForm from "./components/Products/ProductForm"
-import { useSelector } from "react-redux"
 
 const App = () => {
+  const dispatch = useDispatch();
   const { user, isAuthenticated, loading } = useSelector(state => state.auth);
+
+  useEffect(() => {
+    dispatch(loadUser());
+  }, [dispatch]);
 
   return (
     <>
@@ -21,21 +29,21 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected Seller Dashboard Route */}
+        {/* Core Seller Dashboard Landing Hub */}
         <Route
           path="/seller/dashboard"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated} loading={loading} user={user}>
+            <ProtectedRoute isSeller={true} isAuthenticated={isAuthenticated} loading={loading} user={user}>
               <SellerDashboard />
             </ProtectedRoute>
           }
         />
 
-        {/* Protected Seller Upload Route */}
+        {/* Seller Upload Product Form Path */}
         <Route
           path="/seller/product/new"
           element={
-            <ProtectedRoute isAuthenticated={isAuthenticated} loading={loading} user={user}>
+            <ProtectedRoute isSeller={true} isAuthenticated={isAuthenticated} loading={loading} user={user}>
               <ProductForm />
             </ProtectedRoute>
           }

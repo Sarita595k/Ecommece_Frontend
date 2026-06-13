@@ -18,7 +18,7 @@ const ProductCard = () => {
 
     const realProducts = products && products.products ? products.products : (Array.isArray(products) ? products : []);
 
-    // 10 High-Quality E-commerce Sandbox Mockup Products with guaranteed live image links
+    // products lists 
     const fallbackProducts = [
         {
             _id: "mock_id_1",

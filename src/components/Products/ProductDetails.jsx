@@ -99,7 +99,13 @@ const ProductDetails = () => {
                                     <FaShoppingCart className="inline mr-2" /> Add to Cart
                                 </button>
                             </div>
-
+                            {/* Inside your Main Product Display Card/Row layout map loop */}
+                            <div className="text-gray-400 text-[11px] uppercase tracking-wider mb-2">
+                                <span>Category: <strong className="text-gray-200">{product.category}</strong></span>
+                                <span className="mx-2 text-[#004d39]">|</span>
+                                {/* Displays the dynamic input provided directly by the creator */}
+                                <span>Seller: <strong className="text-[#008080]">{product.seller || "Marketplace Partner"}</strong></span>
+                            </div>
                             {/* Trust Badges */}
                             <div className="mt-12 grid grid-cols-2 gap-4 border-t border-[#004d39] pt-8">
                                 <div className="flex items-center gap-3 text-gray-500 text-[10px] uppercase tracking-widest">

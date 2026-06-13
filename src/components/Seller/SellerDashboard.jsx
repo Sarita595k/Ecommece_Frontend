@@ -12,10 +12,10 @@ const SellerDashboard = () => {
     const fetchSellerProducts = async () => {
         try {
             setLoading(true);
-            // Hits an endpoint structured to return only products matching logged-in seller id
-            const { data } = await axios.get('/api/products', { withCredentials: true });
+            // Added timestamp parameter to prevent old browser caches from hiding your new additions
+            const { data } = await axios.get(`/api/products?t=${Date.now()}`, { withCredentials: true });
 
-            // Filters out items to strictly make sure they match the current user's Mongo ID
+            // Filters products where the linked system profile matched the logged-in merchant ID
             const filtered = data.products.filter(prod => prod.user === user?._id);
             setMyProducts(filtered);
         } catch (error) {
@@ -30,7 +30,7 @@ const SellerDashboard = () => {
             try {
                 await axios.delete(`/api/product/${id}`, { withCredentials: true });
                 alert("Listing dropped successfully.");
-                fetchSellerProducts(); // Refresh layout listings
+                fetchSellerProducts();
             } catch (error) {
                 alert("Failed to remove target entity records.");
             }
@@ -47,24 +47,24 @@ const SellerDashboard = () => {
         <div className="min-h-screen bg-[#050505] text-white px-4 md:px-12 py-12">
             <div className="max-w-6xl mx-auto">
 
-                {/* Header Management Dashboard Row */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-[#004d39]">
                     <div>
                         <h2 className="text-2xl font-black tracking-widest uppercase flex items-center gap-3">
                             <FaBoxOpen className="text-[#008080]" /> Seller Hub: <span className="text-[#008080]">My Catalog</span>
                         </h2>
-                        <p className="text-gray-500 text-[10px] uppercase tracking-wider mt-1">Logged in as marketplace partner: {user?.name}</p>
+                        <p className="text-gray-500 text-[10px] uppercase tracking-wider mt-1">
+                            Logged in as marketplace partner: <strong className="text-white">{user?.name}</strong>
+                        </p>
                     </div>
 
                     <Link
                         to="/seller/product/new"
-                        className="flex items-center gap-2 bg-[#006a4e] hover:bg-[#008080] text-white text-xs font-black uppercase tracking-widest px-5 py-3 rounded-sm transition-all shadow-md shadow-[#006a4e]/20 no-underline"
+                        className="flex items-center gap-2 bg-[#006a4e] hover:bg-[#008080] text-white text-xs font-black uppercase tracking-widest px-5 py-3 rounded-sm transition-all shadow-md no-underline"
                     >
                         <FaPlus size={12} /> Add New Product
                     </Link>
                 </div>
 
-                {/* Dashboard Core Table Catalog View */}
                 {loading ? (
                     <div className="text-center py-20 text-gray-500 tracking-widest text-xs uppercase">
                         Loading merchant ledger accounts...
@@ -89,52 +89,45 @@ const SellerDashboard = () => {
                             <tbody className="divide-y divide-[#004d39]/30">
                                 {myProducts.map(product => (
                                     <tr key={product._id} className="hover:bg-[#011812]/40 transition-colors">
-                                        {/* Product Thumbnail Image */}
+
+                                        {/* FIXED: Reading from index position 0 of the image array stack */}
                                         <td className="p-4">
                                             <img
-                                                src={product.images?.url || "https://via.placeholder.com/50"}
+                                                src={product.images && product.images ? product.images.url : "https://via.placeholder.com/50"}
                                                 alt={product.name}
-                                                className="w-10 h-10 object-cover rounded-xs border border-[#004d39]"
+                                                className="w-10 h-10 object-contain bg-[#050505] rounded-xs border border-[#004d39]"
                                             />
                                         </td>
 
-                                        {/* Product Title */}
-                                        <td className="p-4 text-xs font-bold tracking-wide text-white">
+                                        <td className="p-4 text-xs font-bold tracking-wide text-white max-w-[280px] truncate">
                                             {product.name}
                                         </td>
 
-                                        {/* Cost Metric Row */}
                                         <td className="p-4 text-xs font-mono tracking-wider text-[#008080] font-bold">
-                                            ${product.price?.toFixed(2)}
+                                            ₹{product.price?.toLocaleString()}
                                         </td>
 
-                                        {/* Units in Stock Count */}
-                                        <td className="p-4 text-xs font-mono tracking-wide text-gray-300">
-                                            {product.stock} units
+                                        <td className="p-4 text-xs font-mono tracking-wide">
+                                            <span className={product.stock > 0 ? "text-gray-300" : "text-red-400 font-bold"}>
+                                                {product.stock > 0 ? `${product.stock} units` : 'Out of Stock'}
+                                            </span>
                                         </td>
 
-                                        {/* Schema Categorization Tags */}
                                         <td className="p-4 text-xs tracking-wide text-gray-400">
                                             {product.category}
                                         </td>
 
-                                        {/* Controls Block for Modifications */}
                                         <td className="p-4">
                                             <div className="flex justify-center items-center gap-4">
-                                                {/* Edit Action Placeholder Route link */}
                                                 <Link
                                                     to={`/seller/product/edit/${product._id}`}
                                                     className="text-gray-400 hover:text-[#008080] transition-colors"
-                                                    title="Modify specifications details"
                                                 >
                                                     <FaPen size={12} />
                                                 </Link>
-
-                                                {/* Delete Hook Action Trigger button */}
                                                 <button
                                                     onClick={() => handleDeleteProduct(product._id)}
                                                     className="text-gray-500 hover:text-red-500 bg-transparent border-none outline-none cursor-pointer transition-colors"
-                                                    title="Deregister item out of store ledger"
                                                 >
                                                     <FaTrash size={12} />
                                                 </button>

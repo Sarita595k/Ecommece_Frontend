@@ -11,13 +11,17 @@ import {
     LOGOUT_FAIL
 } from '../Constants/UserConstant';
 
-// Load User Action (Checks if user is logged in)
+// Use your environment variable if you aren't relying on a local dev proxy configuration
+const API_URL = import.meta.env.VITE_URL || "";
+
+// Load User Action (Checks if user is logged in via cookie)
 export const loadUser = () => async (dispatch) => {
     try {
         dispatch({ type: LOAD_USER_REQUEST });
 
-        // This route looks at your browser cookies for the JWT token
-        const { data } = await axios.get('/api/user/me', { withCredentials: true });
+        // withCredentials ensures the browser sends the HTTP-Only cookie along with the request
+        const { data } = await axios.get(`${API_URL}/api/user/me`, { withCredentials: true });
+
         dispatch({
             type: LOAD_USER_SUCCESS,
             payload: data.user
@@ -26,19 +30,22 @@ export const loadUser = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: LOAD_USER_FAIL,
-            payload: error.response.data.errMessage || "Login to continue"
+            payload: error.response?.data?.errMessage || "Login to continue"
         });
     }
 };
 
-// Login Action (To replace the fetch in your Login component)
+// Login Action
 export const login = (email, password) => async (dispatch) => {
     try {
         dispatch({ type: LOGIN_REQUEST });
 
-        const config = { headers: { 'Content-Type': 'application/json' } };
+        const config = {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true // CRITICAL: Allows Axios to accept and store cookies from backend
+        };
 
-        const { data } = await axios.post('/api/user/login', { email, password }, config);
+        const { data } = await axios.post(`${API_URL}/api/user/login`, { email, password }, config);
 
         dispatch({
             type: LOGIN_SUCCESS,
@@ -48,27 +55,24 @@ export const login = (email, password) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: LOGIN_FAIL,
-            payload: error.response.data.errMessage
+            payload: error.response?.data?.errMessage || "Invalid Credentials"
         });
     }
 };
 
 export const clearErrors = () => async (dispatch) => {
-    dispatch({
-        type: CLEAR_ERRORS
-    });
+    dispatch({ type: CLEAR_ERRORS });
 };
 
 // Logout User Action
 export const logout = () => async (dispatch) => {
     try {
-        await axios.get('/api/user/logout', { withCredentials: true });
-
+        await axios.get(`${API_URL}/api/user/logout`, { withCredentials: true });
         dispatch({ type: LOGOUT_SUCCESS });
     } catch (error) {
         dispatch({
             type: LOGOUT_FAIL,
-            payload: error.response.data.errMessage || "Failed to logout"
+            payload: error.response?.data?.errMessage || "Failed to logout"
         });
     }
 };
