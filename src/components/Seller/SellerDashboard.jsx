@@ -93,7 +93,10 @@ const SellerDashboard = () => {
                                         {/* FIXED: Reading from index position 0 of the image array stack */}
                                         <td className="p-4">
                                             <img
-                                                src={product.images && product.images ? product.images.url : "https://via.placeholder.com/50"}
+                                                src={
+                                                    product.images?.[0]?.url ||
+                                                    "https://via.placeholder.com/50"
+                                                }
                                                 alt={product.name}
                                                 className="w-10 h-10 object-contain bg-[#050505] rounded-xs border border-[#004d39]"
                                             />
