@@ -16,7 +16,9 @@ const SellerDashboard = () => {
             const { data } = await axios.get(`/api/products?t=${Date.now()}`, { withCredentials: true });
 
             // Filters products where the linked system profile matched the logged-in merchant ID
-            const filtered = data.products.filter(prod => prod.user === user?._id);
+            const filtered = data.products.filter(
+                prod => String(prod.user) === String(user?._id)
+            );
             setMyProducts(filtered);
         } catch (error) {
             console.error("Error pulling catalog history records:", error);
