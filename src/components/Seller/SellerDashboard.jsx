@@ -13,12 +13,29 @@ const SellerDashboard = () => {
         try {
             setLoading(true);
             // Added timestamp parameter to prevent old browser caches from hiding your new additions
-            const { data } = await axios.get(`/api/products?t=${Date.now()}`, { withCredentials: true });
+            const { data } = await axios.get(
+                `/api/products?t=${Date.now()}`,
+                { withCredentials: true }
+            );
 
-            // Filters products where the linked system profile matched the logged-in merchant ID
+            console.log("Logged In User:", user);
+            console.log("All Products:", data.products);
+
+            data.products.forEach(product => {
+                console.log(
+                    "Product User:",
+                    product.user,
+                    "Current User:",
+                    user?._id
+                );
+            });
+
             const filtered = data.products.filter(
                 prod => String(prod.user) === String(user?._id)
             );
+
+            console.log("Filtered Products:", filtered);
+
             setMyProducts(filtered);
         } catch (error) {
             console.error("Error pulling catalog history records:", error);
